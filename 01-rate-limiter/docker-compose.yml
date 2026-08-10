@@ -1,0 +1,59 @@
+services:
+  rate-limiter-service:
+    build:
+      context: ./rate-limiter-service
+    ports:
+      - "8080:8080"
+    environment:
+      RATELIMITER_BACKEND_BASE_URL: http://echo-backend:8081
+      RATELIMITER_API_KEYS_CONFIG_PATH: /config/api-keys.yaml
+    volumes:
+      - ./rate-limiter-service/config:/config
+    depends_on:
+      - echo-backend
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+
+  echo-backend:
+    build:
+      context: ./echo-backend
+    ports:
+      - "8081:8081"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - rate-limiter-service
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
