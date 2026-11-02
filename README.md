@@ -23,13 +23,13 @@ ecosystem who wants depth, not slides.
 
 ## Tech stack decision (and why)
 
-**Java 21 (LTS) + Spring Boot is the default for every problem, application-layer
+**Java 25 (LTS) + Spring Boot is the default for every problem, application-layer
 code included.** No language is swapped in "for variety." If a problem seems to
 demand something Java can't do well, that's a design smell worth noticing, not a
 reason to reach for another language:
 
 - High-concurrency simulations (thousands of simulated clients/drivers/connections)
-  → **Java 21 virtual threads (Project Loom)**, not a switch to Go. This is itself a
+  → **Java 25 virtual threads (Project Loom)**, not a switch to Go. This is itself a
   first-class learning objective: understanding when virtual threads remove the
   need for reactive/callback gymnastics, and where they don't.
 - Consensus (Raft), gossip protocols, CRDTs → implemented in plain Java. The
@@ -214,7 +214,7 @@ A mini Sidekiq/Celery: multiple workers pull jobs from a shared queue, with retr
 exponential backoff, dead-letter queue, and exactly-once-ish processing via
 idempotency keys.
 **Core concepts:** at-least-once delivery, idempotency, backoff/retry policy,
-worker pool sizing (a natural fit for Java 21 virtual threads).
+worker pool sizing (a natural fit for Java 25 virtual threads).
 **Prerequisites:** none directly, but easier after 01–03.
 **You'll be strong in:** the delivery-guarantee vocabulary (at-most-once /
 at-least-once / effectively-once) as something you've implemented, not memorized.
@@ -341,7 +341,7 @@ multi-device) that sit behind WhatsApp/Slack/Messenger.
 
 #### 17 — Real-Time Geo-Matching (Uber-dispatch style)
 Match riders to nearby drivers in real time: geospatial indexing (geohash/quadtree),
-real-time location updates at scale (Java 21 virtual threads simulating thousands of
+real-time location updates at scale (Java 25 virtual threads simulating thousands of
 moving drivers), and a matching algorithm under load.
 **Core concepts:** geospatial indexing, real-time state management, matching
 algorithms, high-concurrency simulation.
